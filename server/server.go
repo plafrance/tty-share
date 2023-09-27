@@ -97,10 +97,11 @@ func NewTTYServer(config TTYServerConfig) (server *TTYServer) {
 	installHandlers := func(session string) {
 		// This function installs handlers for paths that contain the "session" passed as a
 		// parameter. The paths are for the static files, websockets, and other.
-		staticPath := "/s/" + session + "/static/"
-		ttyWsPath := "/s/" + session + "/ws"
-		tunnelWsPath := "/s/" + session + "/tws"
-		pathPrefix := "/s/" + session
+		session_url := config.FrontListenAddress + "/s/" + session
+		staticPath := session_url + "/static/"
+		ttyWsPath := session_url + "/ws"
+		tunnelWsPath := session_url + "/tws"
+		pathPrefix := session_url
 
 		routesHandler.PathPrefix(staticPath).Handler(http.StripPrefix(staticPath,
 			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
