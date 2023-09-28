@@ -110,7 +110,7 @@ func NewTTYServer(config TTYServerConfig) (server *TTYServer) {
 				server.serveContent(w, r, r.URL.Path)
 			})))
 
-		routesHandler.HandleFunc(pathPrefix+"/", func(w http.ResponseWriter, r *http.Request) {
+		routesHandler.HandleFunc( pathPrefix+"/", func(w http.ResponseWriter, r *http.Request) {
 			// Check the frontend/templates/tty-share.in.html file to see where the template applies
 			templateModel := struct {
 				PathPrefix string
@@ -139,7 +139,7 @@ func NewTTYServer(config TTYServerConfig) (server *TTYServer) {
 			})
 		}
 		routesHandler.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			templateModel := struct{ PathPrefix string }{fmt.Sprintf("%s/s/%s", config.SubDir, session)}
+			templateModel := struct{ StaticPath string }{ staticPath }
 			server.handleWithTemplateHtml(w, r, "404.in.html", templateModel)
 		})
 	}
