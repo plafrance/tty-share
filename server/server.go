@@ -113,7 +113,7 @@ func NewTTYServer(config TTYServerConfig) (server *TTYServer) {
 			templateModel := struct {
 				PathPrefix string
 				WSPath     string
-			}{config.FrontListenAddress + pathPrefix, config.FrontListenAddress + ttyWsPath}
+			}{r.URL + pathPrefix, r.URL + ttyWsPath}
 
 			// TODO Extract these in constants
 			w.Header().Add("TTYSHARE-VERSION", "2")
