@@ -24,7 +24,7 @@ func createServer(frontListenAddress string, frontendPath string, pty server.PTY
 		SessionID:          sessionID,
 		AllowTunneling:     allowTunneling,
 		CrossOrigin:        crossOrigin,
-		SubDir:             subDir
+		SubDir:             subDir,
 	}
 
 	server := ttyServer.NewTTYServer(config)
