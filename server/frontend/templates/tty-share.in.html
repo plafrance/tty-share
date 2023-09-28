@@ -10,10 +10,10 @@
         <div id="settings"></div>
         <script type="text/javascript">
             window.ttyInitialData = {
-                wsPath: "/{{.SubDir}}{{.WSPath}}"
+                wsPath: {{.WSPath}}
             }
         </script>
-        <script src="/{{.SubDir}}{{.PathPrefix}}/static/tty-share.js"></script>
+        <script src="{{.PathPrefix}}/static/tty-share.js"></script>
     </body>
 </html>
 
