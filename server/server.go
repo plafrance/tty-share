@@ -113,7 +113,7 @@ func NewTTYServer(config TTYServerConfig) (server *TTYServer) {
 			templateModel := struct {
 				PathPrefix string
 				WSPath     string
-			}{r.URL + pathPrefix, r.URL + ttyWsPath}
+			}{config.SubDir + pathPrefix, config.SubDir + ttyWsPath}
 
 			// TODO Extract these in constants
 			w.Header().Add("TTYSHARE-VERSION", "2")
@@ -137,7 +137,7 @@ func NewTTYServer(config TTYServerConfig) (server *TTYServer) {
 			})
 		}
 		routesHandler.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			templateModel := struct{ PathPrefix string }{fmt.Sprintf("/s/%s", session)}
+			templateModel := struct{ PathPrefix string }{fmt.Sprintf("%s/s/%s", config.SubDir, session)}
 			server.handleWithTemplateHtml(w, r, "404.in.html", templateModel)
 		})
 	}

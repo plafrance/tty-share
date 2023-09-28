@@ -16,7 +16,7 @@ import (
 
 var version string = "0.0.0"
 
-func createServer(frontListenAddress string, frontendPath string, pty server.PTYHandler, sessionID string, allowTunneling bool, crossOrigin bool) *server.TTYServer {
+func createServer(frontListenAddress string, frontendPath string, pty server.PTYHandler, sessionID string, allowTunneling bool, crossOrigin bool, subDir string) *server.TTYServer {
 	config := ttyServer.TTYServerConfig{
 		FrontListenAddress: frontListenAddress,
 		FrontendPath:       frontendPath,
@@ -24,6 +24,7 @@ func createServer(frontListenAddress string, frontendPath string, pty server.PTY
 		SessionID:          sessionID,
 		AllowTunneling:     allowTunneling,
 		CrossOrigin:        crossOrigin,
+		SubDir:             subDir
 	}
 
 	server := ttyServer.NewTTYServer(config)
@@ -74,6 +75,7 @@ Flags:
 	listenAddress := flag.String("listen", "localhost:8000", "[s] tty-server address")
 	versionFlag := flag.Bool("version", false, "Print the tty-share version")
 	frontendPath := flag.String("frontend-path", "", "[s] The path to the frontend resources. By default, these resources are included in the server binary, so you only need this path if you don't want to use the bundled ones.")
+	subDir := flag.String("subdir", "", "[c] subdirectory")
 	proxyServerAddress := flag.String("tty-proxy", "on.tty-share.com:4567", "[s] Address of the proxy for public facing connections")
 	readOnly := flag.Bool("readonly", false, "[s] Start a read only session")
 	publicSession := flag.Bool("public", false, "[s] Create a public session")
@@ -197,7 +199,7 @@ Flags:
 		pty = &nilPTY{}
 	}
 
-	server := createServer(*listenAddress, *frontendPath, pty, sessionID, *allowTunneling, *crossOrgin)
+	server := createServer(*listenAddress, *frontendPath, pty, sessionID, *allowTunneling, *crossOrgin, subdir)
 	if cols, rows, e := ptyMaster.GetWinSize(); e == nil {
 		server.WindowSize(cols, rows)
 	}
