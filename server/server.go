@@ -112,9 +112,10 @@ func NewTTYServer(config TTYServerConfig) (server *TTYServer) {
 		routesHandler.HandleFunc(pathPrefix+"/", func(w http.ResponseWriter, r *http.Request) {
 			// Check the frontend/templates/tty-share.in.html file to see where the template applies
 			templateModel := struct {
+				SubDir     string
 				PathPrefix string
 				WSPath     string
-			}{config.SubDir + pathPrefix, config.SubDir + ttyWsPath}
+			}{config.SubDir, pathPrefix, ttyWsPath}
 
 			// TODO Extract these in constants
 			w.Header().Add("TTYSHARE-VERSION", "2")
