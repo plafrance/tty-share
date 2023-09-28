@@ -97,7 +97,7 @@ func NewTTYServer(config TTYServerConfig) (server *TTYServer) {
 	installHandlers := func(session string) {
 		// This function installs handlers for paths that contain the "session" passed as a
 		// parameter. The paths are for the static files, websockets, and other.
-		session_url := config.FrontListenAddress + "/s/" + session
+		session_url := "/s/" + session
 		staticPath := session_url + "/static/"
 		ttyWsPath := session_url + "/ws"
 		tunnelWsPath := session_url + "/tws"
@@ -113,7 +113,7 @@ func NewTTYServer(config TTYServerConfig) (server *TTYServer) {
 			templateModel := struct {
 				PathPrefix string
 				WSPath     string
-			}{pathPrefix, ttyWsPath}
+			}{config.FrontListenAddress + pathPrefix, config.FrontListenAddress + ttyWsPath}
 
 			// TODO Extract these in constants
 			w.Header().Add("TTYSHARE-VERSION", "2")
