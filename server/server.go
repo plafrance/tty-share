@@ -42,6 +42,7 @@ type TTYServerConfig struct {
 	SessionID          string
 	AllowTunneling     bool
 	CrossOrigin        bool
+	SubDir             string
 }
 
 // TTYServer represents the instance of a tty server
