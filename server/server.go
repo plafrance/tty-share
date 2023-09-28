@@ -98,18 +98,18 @@ func NewTTYServer(config TTYServerConfig) (server *TTYServer) {
 	installHandlers := func(session string) {
 		// This function installs handlers for paths that contain the "session" passed as a
 		// parameter. The paths are for the static files, websockets, and other.
-		session_url := "/s/" + session
-		staticPath := session_url + "/static/"
+		session_url := "s/" + session
 		ttyWsPath := session_url + "/ws"
-		tunnelWsPath := session_url + "/tws"
 		pathPrefix := session_url
+		staticPath := "/" + session_url + "/static/"
+		tunnelWsPath := "/" + session_url + "/tws"
 
 		routesHandler.PathPrefix(staticPath).Handler(http.StripPrefix(staticPath,
 			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				server.serveContent(w, r, r.URL.Path)
 			})))
 
-		routesHandler.HandleFunc(pathPrefix+"/", func(w http.ResponseWriter, r *http.Request) {
+		routesHandler.HandleFunc("/" + pathPrefix+"/", func(w http.ResponseWriter, r *http.Request) {
 			// Check the frontend/templates/tty-share.in.html file to see where the template applies
 			templateModel := struct {
 				PathPrefix string
@@ -121,14 +121,14 @@ func NewTTYServer(config TTYServerConfig) (server *TTYServer) {
 
 			// Deprecated HEADER (from prev version)
 			// TODO: Find a proper way to stop handling backward versions
-			w.Header().Add("TTYSHARE-WSPATH", ttyWsPath)
+			w.Header().Add("TTYSHARE-WSPATH", "/" + config.SubDir + ttyWsPath)
 
-			w.Header().Add("TTYSHARE-TTY-WSPATH", ttyWsPath)
+			w.Header().Add("TTYSHARE-TTY-WSPATH", "/" + config.SubDir + ttyWsPath)
 			w.Header().Add("TTYSHARE-TUNNEL-WSPATH", tunnelWsPath)
 
 			server.handleWithTemplateHtml(w, r, "tty-share.in.html", templateModel)
 		})
-		routesHandler.HandleFunc(ttyWsPath, func(w http.ResponseWriter, r *http.Request) {
+		routesHandler.HandleFunc("/" + config.SubDir + ttyWsPath, func(w http.ResponseWriter, r *http.Request) {
 			server.handleTTYWebsocket(w, r, config.CrossOrigin)
 		})
 		if server.config.AllowTunneling {
@@ -173,6 +173,7 @@ func (server *TTYServer) handleTTYWebsocket(w http.ResponseWriter, r *http.Reque
 		}
 	}
 
+	log.Debugf("Request %s", r)
 	conn, err := upgrader.Upgrade(w, r, nil)
 
 	if err != nil {
