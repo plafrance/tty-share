@@ -199,7 +199,7 @@ Flags:
 		pty = &nilPTY{}
 	}
 
-	server := createServer(*listenAddress, *frontendPath, pty, sessionID, *allowTunneling, *crossOrgin, subDir)
+	server := createServer(*listenAddress, *frontendPath, pty, sessionID, *allowTunneling, *crossOrgin, *subDir)
 	if cols, rows, e := ptyMaster.GetWinSize(); e == nil {
 		server.WindowSize(cols, rows)
 	}
