@@ -97,24 +97,23 @@ func NewTTYServer(config TTYServerConfig) (server *TTYServer) {
 	installHandlers := func(session string) {
 		// This function installs handlers for paths that contain the "session" passed as a
 		// parameter. The paths are for the static files, websockets, and other.
-		session_url := "s/" + session
-		ttyWsPath :=  "/" + session_url + "/ws"
+		session_url := config.SubDir + "s/" + session + "/"
+		ttyWsPath :=  "/" + session_url + "ws"
 		pathPrefix := "/" + session_url
-		staticPath := "/" + session_url + "/static/"
-		tunnelWsPath := "/" + session_url + "/tws"
+		staticPath := "/" + session_url + "static/"
+		tunnelWsPath := "/" + session_url + "tws"
 
 		routesHandler.PathPrefix(staticPath).Handler(http.StripPrefix(staticPath,
 			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				server.serveContent(w, r, r.URL.Path)
 			})))
 
-		routesHandler.HandleFunc( pathPrefix+"/", func(w http.ResponseWriter, r *http.Request) {
+		routesHandler.HandleFunc( pathPrefix, func(w http.ResponseWriter, r *http.Request) {
 			// Check the frontend/templates/tty-share.in.html file to see where the template applies
 			templateModel := struct {
-				SubDir     string
-				PathPrefix string
+				StaticPath string
 				WSPath     string
-			}{config.SubDir, session_url, "/" + config.SubDir + session_url + "/ws"}
+			}{ staticPath, ttyWsPath }
 
 			// TODO Extract these in constants
 			w.Header().Add("TTYSHARE-VERSION", "2")
@@ -140,9 +139,8 @@ func NewTTYServer(config TTYServerConfig) (server *TTYServer) {
 		routesHandler.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		    log.Errorf("404: %s", r.URL.Path)
 			templateModel := struct{
-				SubDir     string
 				StaticPath string
-			}{ config.SubDir, session_url + "/static" }
+			}{ staticPath }
 			server.handleWithTemplateHtml(w, r, "404.in.html", templateModel)
 		})
 	}
