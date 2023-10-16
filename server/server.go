@@ -92,6 +92,7 @@ func NewTTYServer(config TTYServerConfig) (server *TTYServer) {
 	server.httpServer = &http.Server{
 		Addr: config.FrontListenAddress,
 	}
+	server.httpServer.SetKeepAlivesEnabled( false )
 	routesHandler := mux.NewRouter()
 
 	installHandlers := func(session string) {
